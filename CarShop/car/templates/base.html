@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>{% block title %}Library Management{% endblock %}</title>
+
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css'%}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css'%}" rel="stylesheet">
+  <link href="{% static 'assets/css/main.css'%}" rel="stylesheet">
+
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+  <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+      <a href="{% url 'home' %}" class="logo d-flex align-items-center me-auto me-xl-0">
+        <h1 class="sitename">CarZone</h1>
+      </a>
+      {% include 'navbar.html' %}
+    </div>
+  </header>
+
+  <main class="flex-grow-1" style="margin-top: 100px;">
+      {% block content %}
+      {% endblock %}
+  </main>
+
+  <footer id="footer" class="footer mt-auto py-3 bg-white border-top">
+    <div class="container copyright text-center">
+      <p class="mb-0">© <span>Copyright</span> <strong class="px-1">Malik</strong></p>
+    </div>
+  </footer>
+
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js'%}"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<nav id="navmenu" class="navmenu">
+    <ul>
+      <li><a href="{% url 'home' %}">Home (Cars)</a></li>
+
+      {% if user.is_authenticated %}
+
+        <li class="dropdown"><a href="#"><span>{{ user.username }}</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              {% if user.is_staff %}
+                  <li><a href="{% url 'dashboard' %}">Admin Dashboard</a></li>
+                  <li><hr class="dropdown-divider"></li>
+              {% endif %}
+
+              <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </li>
+
+      {% else %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+
+      {% endif %}
+    </ul>
+</nav>

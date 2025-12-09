@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+
+    <!-- Breadcrumb (Navigation path) -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ car.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- LEFT COLUMN: Car Image -->
+        <div class="col-md-7">
+            <div class="card shadow-sm border-0">
+                {% if car.image %}
+                    <img src="{{ car.image.url }}" class="img-fluid rounded" alt="{{ car.title }}">
+                {% else %}
+                    <img src="https://via.placeholder.com/800x500?text=No+Image+Available" class="img-fluid rounded" alt="No Image">
+                {% endif %}
+            </div>
+
+            <!-- Description Section -->
+            <div class="mt-4">
+                <h4>Description</h4>
+                <p class="text-muted">{{ car.description }}</p>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Specs & Action -->
+        <div class="col-md-5">
+            <div class="card shadow border-0">
+                <div class="card-body">
+
+                    <!-- Title & Price -->
+                    <h2 class="fw-bold">{{ car.title }}</h2>
+                    <p class="text-muted">Sold by: {{ car.seller.username }}</p>
+                    <h3 class="text-success fw-bold mb-4">${{ car.price }}</h3>
+
+                    <!-- SPECS GRID (The part you asked for) -->
+                    <div class="row g-3 mb-4">
+                        <!-- Mileage -->
+                        <div class="col-6">
+                            <div class="p-3 border rounded bg-light text-center">
+                                <i class="fas fa-tachometer-alt text-primary mb-2"></i>
+                                <div class="small text-muted">Mileage</div>
+                                <div class="fw-bold">{{ car.mileage }} km</div>
+                            </div>
+                        </div>
+
+                        <!-- Transmission -->
+                        <div class="col-6">
+                            <div class="p-3 border rounded bg-light text-center">
+                                <i class="fas fa-cog text-primary mb-2"></i>
+                                <div class="small text-muted">Transmission</div>
+                                <div class="fw-bold">{{ car.transmission }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Condition -->
+                        <div class="col-6">
+                            <div class="p-3 border rounded bg-light text-center">
+                                <i class="fas fa-check-circle text-primary mb-2"></i>
+                                <div class="small text-muted">Condition</div>
+                                <div class="fw-bold">{{ car.condition }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Year -->
+                        <div class="col-6">
+                            <div class="p-3 border rounded bg-light text-center">
+                                <i class="fas fa-calendar-alt text-primary mb-2"></i>
+                                <div class="small text-muted">Year</div>
+                                <div class="fw-bold">{{ car.year }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Color -->
+                        <div class="col-6">
+                            <div class="p-3 border rounded bg-light text-center">
+                                <i class="fas fa-palette text-primary mb-2"></i>
+                                <div class="small text-muted">Color</div>
+                                <div class="fw-bold">{{ car.color }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="col-6">
+                            <div class="p-3 border rounded bg-light text-center">
+                                <i class="fas fa-car text-primary mb-2"></i>
+                                <div class="small text-muted">Type</div>
+                                <div class="fw-bold">{{ car.category.name }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    {% if user.is_authenticated %}
+                        {% if user == car.seller %}
+                            <!-- If the user owns this car -->
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-warning disabled">You own this car</button>
+                            </div>
+                        {% else %}
+                            <!-- Buy Button (Triggers Modal) -->
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#buyModal">
+                                    Make an Offer / Buy
+                                </button>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-primary">
+                                Login to Contact Seller
+                            </a>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- BUY MODAL (The Popup Form) -->
+<div class="modal fade" id="buyModal" tabindex="-1" aria-labelledby="buyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="buyModalLabel">Contact Seller</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{% url 'create_order' car.id %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <p>Send a message to <strong>{{ car.seller.username }}</strong> regarding the <strong>{{ car.title }}</strong>.</p>
+
+                    <div class="mb-3">
+                        <label class="form-label">Your Message</label>
+                        {{ order_form.message }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Send Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
